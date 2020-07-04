@@ -124,32 +124,37 @@ http.createServer((request,response) => {
       if (error) throw error;
       db.query('SELECT * FROM topic WHERE id=?', [queryData.id], (error2, topic) => {
         if (error2) throw error2;
-        const list = template.list(topics);
-        const html = template.HTML(
-          topics[0].title,
-          list,
-          `
-            <form action="/update_process" method="POST">
-              <input type="hidden" name="id" value="${topics[0].id}">
-              <p>
-                <input type="text" name="title" placeholder="title" value="${topics[0].title}">
-              </p>
-              <p>
-                <textarea name="description" placeholder="description">${topics[0].description}</textarea>
-              </p>
-              <p>
-                <input type="submit">
-              </p>
-            </form>
-          `,
-          `
-            <a href="create">create</a>
-            <a href="/update?id=${topics[0].id}">update</a>
-          `
-        );
+        db.query(`SELECT * FROM author`, (error3, authors) => {
+          const list = template.list(topics);
+          const html = template.HTML(
+            topics[0].title,
+            list,
+            `
+              <form action="/update_process" method="POST">
+                <input type="hidden" name="id" value="${topics[0].id}">
+                <p>
+                  <input type="text" name="title" placeholder="title" value="${topics[0].title}">
+                </p>
+                <p>
+                  <textarea name="description" placeholder="description">${topics[0].description}</textarea>
+                </p>
+                <p>
+                  ${template.authorSelect(authors, topic[0].author_id)}
+                </p>
+                <p>
+                  <input type="submit">
+                </p>
+              </form>
+            `,
+            `
+              <a href="create">create</a>
+              <a href="/update?id=${topics[0].id}">update</a>
+            `
+          );
 
-        response.writeHead(200);
-        response.end(html);
+          response.writeHead(200);
+          response.end(html);
+        })
       })
     });
   } else if ( pathname === '/update_process') {
@@ -160,7 +165,7 @@ http.createServer((request,response) => {
     request.on('end', () => {
       const post = qs.parse(body);
       
-      db.query('UPDATE topic SET title=?, description=?, author_id=1 WHERE id=?', [post.title, post.description, post.id], (error, result) => {
+      db.query('UPDATE topic SET title=?, description=?, author_id=? WHERE id=?', [post.title, post.description, post.author, post.id], (error, result) => {
         if (error) throw error;
         response.writeHead(302, {Location: `/?id=${post.id}`});
         response.end();
