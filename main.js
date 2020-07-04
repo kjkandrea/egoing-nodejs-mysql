@@ -112,21 +112,22 @@ http.createServer((request,response) => {
       )
     });
   } else if ( pathname === '/update' ) {
-    fs.readdir(`${__dirname}/data`, (error, filelist) => {
-      const filteredId = path.parse(queryData.id).base;
-      fs.readFile(`data/${filteredId}`, (error, description) => {
-        const list = template.list(filelist);
+    db.query(`SELECT * FROM topic`, (error, topics) => {
+      if (error) throw error;
+      db.query('SELECT * FROM topic WHERE id=?', [queryData.id], (error2, topic) => {
+        if (error2) throw error2;
+        const list = template.list(topics);
         const html = template.HTML(
-          title,
-          list, 
+          topics[0].title,
+          list,
           `
             <form action="/update_process" method="POST">
-              <input type="hidden" name="id" value="${title}">
+              <input type="hidden" name="id" value="${topics[0].id}">
               <p>
-                <input type="text" name="title" placeholder="title" value="${title}">
+                <input type="text" name="title" placeholder="title" value="${topics[0].title}">
               </p>
               <p>
-                <textarea name="description" placeholder="description">${description}</textarea>
+                <textarea name="description" placeholder="description">${topics[0].description}</textarea>
               </p>
               <p>
                 <input type="submit">
@@ -135,14 +136,14 @@ http.createServer((request,response) => {
           `,
           `
             <a href="create">create</a>
-            <a href="/update?id=${title}">update</a>
+            <a href="/update?id=${topics[0].id}">update</a>
           `
         );
 
         response.writeHead(200);
         response.end(html);
       })
-    })
+    });
   } else if ( pathname === '/update_process') {
     let body = '';
     request.on('data', (data) => {
@@ -150,14 +151,11 @@ http.createServer((request,response) => {
     });
     request.on('end', () => {
       const post = qs.parse(body);
-      const id = post.id;
-      const title = post.title;
-      const description = post.description;
-      fs.rename(`data/${id}`, `data/${title}`, (error) => {
-        fs.writeFile(`data/${title}`, description, 'utf-8', (error) => {
-          response.writeHead(302, {Location: `/?id=${title}`});
-          response.end();
-        })
+      
+      db.query('UPDATE topic SET title=?, description=?, author_id=1 WHERE id=?', [post.title, post.description, post.id], (error, result) => {
+        if (error) throw error;
+        response.writeHead(302, {Location: `/?id=${post.id}`});
+        response.end();
       })
     });
   } else if ( pathname === '/delete_process') {
