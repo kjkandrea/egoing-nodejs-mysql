@@ -1,0 +1,24 @@
+{
+  "name": "egoing-nodejs-mysql",
+  "version": "1.0.0",
+  "description": "Node.js 와 MySQL",
+  "main": "main.js",
+  "dependencies": {
+    "sanitize-html": "^1.27.0",
+    "underscore": "^1.10.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "node main.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kjkandrea/egoing-nodejs-mysql.git"
+  },
+  "author": "andrea",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kjkandrea/egoing-nodejs-mysql/issues"
+  },
+  "homepage": "https://github.com/kjkandrea/egoing-nodejs-mysql#readme"
+}
