@@ -71,3 +71,5 @@ connection.end();
 ### db 모듈 생성. DB 접속 정보를 해당 모듈에 분리
 
 ### topic 모듈 생성. home 부분을 topic으로 이전
+
+### topic 모듈 생성. create, update, delete 부분을 topic으로 이전
