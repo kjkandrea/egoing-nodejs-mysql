@@ -1,19 +1,8 @@
 const http = require('http');
-const fs = require('fs');
 const url = require('url');
 const qs = require('querystring');
 const template = require('./lib/template');
-const path = require('path');
-const sanitizeHtml = require('sanitize-html')
-const master = require('./password')
-const mysql = require('mysql');
-const db = mysql.createConnection({
-  host     : 'localhost',
-  user     : master.user,
-  password : master.password,
-  database : 'opentutorials'
-});
-db.connect();
+const db = require('./lib/db');
 
 http.createServer((request,response) => {
   const _url = request.url;
