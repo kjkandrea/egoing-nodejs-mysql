@@ -51,3 +51,5 @@ connection.end();
 기존에 /data에 연결되었던 data들을 MySQL 데이터베이스 데이터로 변경하는 작업
 
 ## TOC(list) 데이터베이스 연결
+
+## 상세보기(Read) 데이터베이스 연결

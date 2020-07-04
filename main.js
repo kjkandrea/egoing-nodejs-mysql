@@ -26,7 +26,7 @@ http.createServer((request,response) => {
   if (pathname === '/') {
     if(!queryData.id){
       db.query(`SELECT * FROM topic`, (error, topics) => {
-        title = 'Welcome';
+        const title = 'Welcome';
         const description = 'Hello, Node.js';
         const list = template.list(topics);
         const html = template.HTML(
@@ -36,28 +36,27 @@ http.createServer((request,response) => {
           `<a href="create">create</a>`
         );
 
-        console.log(topics)
         response.writeHead(200);
         response.end(html);
       })
     } else {
-      fs.readdir(`${__dirname}/data`, (error, filelist) => {
-        const filteredId = path.parse(queryData.id).base;
-        fs.readFile(`data/${filteredId}`, (error, description) => {
-          const sanitizeTitle = sanitizeHtml(title);
-          const sanitizeDescription = sanitizeHtml(description, {
-            allowedTags: ['h1']
-          });
-          const list = template.list(filelist);
+      db.query(`SELECT * FROM topic`, (error, topics) => {
+        if (error) throw error;
+        db.query('SELECT * FROM topic WHERE id=?', [queryData.id], (error2, topic) => {
+          if (error2) throw error2;
+          console.log(topic[0].title)
+          const title = topic[0].title;
+          const description = topic[0].description;
+          const list = template.list(topics);
           const html = template.HTML(
-            sanitizeTitle,
-            list, 
-            `<h2>${sanitizeTitle}</h2>${sanitizeDescription}`,
+            title,
+            list,
+            `<h2>${title}</h2>${description}`,
             `
               <a href="/create">create</a>
-              <a href="/update?id=${sanitizeTitle}">update</a>
+              <a href="/update?id=${queryData.id}">update</a>
               <form action="delete_process" method="post" onsubmit="">
-                <input type="hidden" name="id" value="${sanitizeTitle}">
+                <input type="hidden" name="id" value="${queryData.id}">
                 <input type="submit" value="delete">
               </form>
             `
