@@ -54,7 +54,7 @@ http.createServer((request,response) => {
             `
               <a href="/create">create</a>
               <a href="/update?id=${queryData.id}">update</a>
-              <form action="delete_process" method="post" onsubmit="">
+              <form action="delete_process" method="post" onsubmit="confirm('Are You Sure?')">
                 <input type="hidden" name="id" value="${queryData.id}">
                 <input type="submit" value="delete">
               </form>
@@ -165,11 +165,11 @@ http.createServer((request,response) => {
     });
     request.on('end', () => {
       const post = qs.parse(body);
-      const id = post.id;
-      const filteredId = path.parse(id).base;
-      fs.unlink(`data/${filteredId}`, (error) => {
+
+      db.query('DELETE FROM topic WHERE id=?', [post.id], (error, result) => {
+        if (error) throw error;
         response.writeHead(302, {Location: `/`});
-          response.end();
+        response.end();
       })
     });
   } else {

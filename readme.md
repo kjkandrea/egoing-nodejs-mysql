@@ -57,3 +57,5 @@ connection.end();
 ## 글 생성(Create) 기능 데이터베이스 연결
 
 ## 글 수정(Update) 기능 데이터베이스 연결
+
+## 글 삭제(Delete) 기능 데이터베이스 연결
