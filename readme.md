@@ -45,3 +45,9 @@ connection.end();
 * `createConnection` : 데이터베이스 접속정보를 기입하는 부분. 이를 상수로 선언하여 계속 사용함.
 * `connection.connect()` : 데이터베이스에 연결(connect)
 * `connection.query` : mysql 쿼리문을 작성
+
+## MySQL과 어플리케이션 연결
+
+기존에 /data에 연결되었던 data들을 MySQL 데이터베이스 데이터로 변경하는 작업
+
+## TOC(list) 데이터베이스 연결

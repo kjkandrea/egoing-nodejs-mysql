@@ -5,6 +5,15 @@ const qs = require('querystring');
 const template = require('./lib/template');
 const path = require('path');
 const sanitizeHtml = require('sanitize-html')
+const master = require('./password')
+const mysql = require('mysql');
+const db = mysql.createConnection({
+  host     : 'localhost',
+  user     : master.user,
+  password : master.password,
+  database : 'opentutorials'
+});
+db.connect();
 
 http.createServer((request,response) => {
   const _url = request.url;
@@ -16,19 +25,18 @@ http.createServer((request,response) => {
   
   if (pathname === '/') {
     if(!queryData.id){
-      fs.readdir(`${__dirname}/data`, (error, filelist) => {
+      db.query(`SELECT * FROM topic`, (error, topics) => {
         title = 'Welcome';
-        const sanitizeTitle = sanitizeHtml(title);
-        const description  = 'Hello, Node.js'
-        const sanitizeDescription = sanitizeHtml(description);
-        const list = template.list(filelist);
+        const description = 'Hello, Node.js';
+        const list = template.list(topics);
         const html = template.HTML(
-          sanitizeTitle,
+          title,
           list,
-          `<h2>${sanitizeTitle}</h2>${sanitizeDescription}`,
+          `<h2>${title}</h2>${description}`,
           `<a href="create">create</a>`
         );
 
+        console.log(topics)
         response.writeHead(200);
         response.end(html);
       })
