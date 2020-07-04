@@ -3,6 +3,7 @@ const url = require('url');
 const qs = require('querystring');
 const template = require('./lib/template');
 const db = require('./lib/db');
+const topic = require('./lib/topic');
 
 http.createServer((request,response) => {
   const _url = request.url;
@@ -14,20 +15,7 @@ http.createServer((request,response) => {
   
   if (pathname === '/') {
     if(!queryData.id){
-      db.query(`SELECT * FROM topic`, (error, topics) => {
-        const title = 'Welcome';
-        const description = 'Hello, Node.js';
-        const list = template.list(topics);
-        const html = template.HTML(
-          title,
-          list,
-          `<h2>${title}</h2>${description}`,
-          `<a href="create">create</a>`
-        );
-
-        response.writeHead(200);
-        response.end(html);
-      })
+      topic.home(request,response);
     } else {
       db.query(`SELECT * FROM topic`, (error, topics) => {
         if (error) throw error;
