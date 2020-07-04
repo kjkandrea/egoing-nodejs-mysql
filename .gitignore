@@ -29,3 +29,4 @@ yarn-error.log*
 # etc
 
 /data
+password.js
