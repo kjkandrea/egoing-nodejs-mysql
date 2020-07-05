@@ -160,3 +160,5 @@ db.query(`SELECT * FROM topic LEFT JOIN author ON topic.author_id=author.id WHER
   ... // Something
 }
 ```
+
+## 보안 : 데이터베이스에서 읽어오는 정보에 sanitize-html 적용
