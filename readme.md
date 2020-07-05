@@ -85,3 +85,78 @@ connection.end();
 ### author 저자 목록 삭제(Delete) 구현
 
 해당 저자가 작성한 topic도 함께 지워지도록 함
+
+## 보안 : SQL Injection
+
+사용자가 외부에서 `DROP table author`등의 명령을 실행할 수 있다면?
+
+목록 페이지에서 현재 다음과 같은 url이 노출된다.
+
+``` url
+http://localhost:3000/?id=3
+```
+
+보안을 신경 쓰지 않는다면, 이 url뒤에 DROP TABLE Query 문을 붙이는 등의 방식으로 악의적인 쿼리가 실행될 수 있다.
+
+``` url
+http://localhost:3000/?id=3;DROP table topic;
+```
+
+위의 사례에서는 다음과 같은 쿼리문이 생성된다.
+하여 쿼리문이 실제로 실행되고나 하지 않는다.
+
+``` query
+SELECT *
+  FROM toic
+  LEFT JOIN author ON topic.author_id=author.id
+  WHERE
+    topic.id='1;DROP TABLE topic;'
+
+```
+
+### 최악의 상황 가정하기
+
+만일 아래와 같은 방식으로 목록을 불러오는 쿼리문을 실행하고 있었다면? `${queryData.id}` 부분에 주목하자.
+
+``` javascript
+db.query(`SELECT * FROM topic LEFT JOIN author ON topic.author_id=author.id WHERE topic.id=${queryData.id}`, (error2, topic) => {
+  ... // Something
+}
+```
+
+다음과 같은 쿼리문이 만들어지게 된다.
+
+``` query
+SELECT *
+  FROM toic
+  LEFT JOIN author ON topic.author_id=author.id
+  WHERE
+    topic.id=1;
+    DROP TABLE topic;
+```
+
+`multipleStatements` 속성이 true로 지정되어 있다면 `DROP TABLE topic;`이 서버로 전송되어 실행되는것이다.
+
+### 쿼리문 보호하기
+
+#### 방법 1. 필요한 인자를 ? 로 받기
+
+실행이 되지 않는 이유는 다음과 같이 `topic.id=?` 부분을 인자로 받고 있기 때문이다. 
+
+``` javascript
+db.query('SELECT * FROM topic LEFT JOIN author ON topic.author_id=author.id WHERE topic.id=?', [queryData.id], (error2, topic) => {
+  ... // Something
+}
+```
+
+위의 코드처럼 물음표로 사용자에게 들어오는 데이터를 치환하는 작업이 필요하다.
+
+#### 방법 2. db.escape 사용
+
+`db.escape()`를 사용하여 인자가 들어가는 부분을 필터링하는 것이다.
+
+``` javascript
+db.query(`SELECT * FROM topic LEFT JOIN author ON topic.author_id=author.id WHERE topic.id=${db.escape(queryData.id)}`, (error2, topic) => {
+  ... // Something
+}
+```
