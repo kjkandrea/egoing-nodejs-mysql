@@ -73,3 +73,5 @@ connection.end();
 ### topic 모듈 생성. home 부분을 topic으로 이전
 
 ### topic 모듈 생성. create, update, delete 부분을 topic으로 이전
+
+### author 모듈 생성. 저자 목록 table 구현
