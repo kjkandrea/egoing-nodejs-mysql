@@ -81,3 +81,7 @@ connection.end();
 ### author 저자 목록 생성(Create) 구현
 
 ### author 저자 목록 수정(Update) 구현
+
+### author 저자 목록 삭제(Delete) 구현
+
+해당 저자가 작성한 topic도 함께 지워지도록 함
