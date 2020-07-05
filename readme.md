@@ -74,4 +74,8 @@ connection.end();
 
 ### topic 모듈 생성. create, update, delete 부분을 topic으로 이전
 
-### author 모듈 생성. 저자 목록 table 구현
+## 저자 기능 구현
+
+### author 모듈 생성. 저자 목록(Read) table 구현
+
+### author 저자 목록 생성(Create) 구현
