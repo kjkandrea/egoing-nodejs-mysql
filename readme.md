@@ -79,3 +79,5 @@ connection.end();
 ### author 모듈 생성. 저자 목록(Read) table 구현
 
 ### author 저자 목록 생성(Create) 구현
+
+### author 저자 목록 수정(Update) 구현
